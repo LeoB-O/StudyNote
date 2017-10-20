@@ -97,6 +97,52 @@ commit命令用于将已经暂存的文件保存至Git Repository中。
 + 如果文件已经添加至暂存区，那么需要使用`-f`参数强制删除，确保安全。因为删除之后文件不可恢复。
 + 如果只是想把文件从Git仓库(暂存区)中删除，但是不从磁盘中删除，那么可以使用带`--cached`参数的命令
 
+具体命令如下：
 
-***
-#未完待续
+    $ git rm [Filename]
+    相当于
+    $ rm [Filename]
+    $ git add [Filename]
+    $ git commit
+
+#### 8.移动文件
+移动文件的命令可以用于移动文也可以用于重命名。具体命令如下：
+
+    $ git mv File_From File_To
+	相当于
+	$ mv File_From File_To
+	$ git rm File_From
+	$ git add File_To
+
+#### 9.查看提交历史
+
+###### **--不带参数**
+    $ git log
+不带参数的`git log`命令会列出所有的更新、每个commit的 SHA-1 校验和、作者的名字和电子邮件地址、提交时间以及提交说明。最近的更新排在最上面。
+
+###### **-p选项**
+	$ git log -p -time
+带`-p`选项的命令用来显示每次内容提交的差异，`-time`表示仅显示最近`time`次的commit。
+	
+###### **--stat选项**
+	$ git log --stat  //列出每个commit的简略统计信息。
+#
+
+###### **--Pretty 选项**
+ 这个选项可以指定使用不同于默认格式的方式展示提交历史。 这个选项有一些内建的子选项供你使用。 比如用 `oneline` 将每个提交放在一行显示，查看的提交数很大时非常有用。 另外还有 `short`，`full` 和 `fuller` 可以用，展示的信息或多或少有些不同，请自己动手实践一下看看效果如何。
+
+`--format`可以定制要显示的记录格式。
+
+例子：
+
+	$ git log --pretty=format:"%h - %an, %ar : %s"
+	ca82a6d - Scott Chacon, 6 years ago : changed the version number
+	085bb3b - Scott Chacon, 6 years ago : removed unnecessary test
+	a11bef0 - Scott Chacon, 6 years ago : first commit
+
+
+| 水果        | 价格    |  数量  |
+| --------   | -----:   | :----: |
+| 香蕉        | $1      |   5    |
+| 苹果        | $1      |   6    |
+| 草莓        | $1      |   7    |
