@@ -140,9 +140,102 @@ commit命令用于将已经暂存的文件保存至Git Repository中。
 	085bb3b - Scott Chacon, 6 years ago : removed unnecessary test
 	a11bef0 - Scott Chacon, 6 years ago : first commit
 
+Table 1. git log --pretty=format 常用的选项
 
-| 水果        | 价格    |  数量  |
-| --------   | -----:   | :----: |
-| 香蕉        | $1      |   5    |
-| 苹果        | $1      |   6    |
-| 草莓        | $1      |   7    |
+| 选项 |说明|
+| ---- |---|
+|%H |提交对象（commit）的完整哈希字串|
+|%h|提交对象的简短哈希字串|
+|%T|树对象（tree）的完整哈希字串|
+|%t|树对象的简短哈希字串|
+|%P|父对象（parent）的完整哈希字串|
+|%p|父对象的简短哈希字串|
+|%an|作者（author）的名字|
+|%ae|作者的电子邮件地址|
+|%ad|作者修订日期（可以用 --date= 选项定制格式）|
+|%ar|作者修订日期，按多久以前的方式显示|
+|%cn|提交者（committer）的名字|
+|%ce|提交者的电子邮件地址|
+|%cd|提交日期|
+|%cr|提交日期，按多久以前的方式显示|
+|%s|提交说明|
+
+###### --graph选项
+	$ git log --graph
+显示 ASCII 图形表示的分支合并历史。
+
+###### --其他选项
+
+	-(n)               //仅显示最近的 n 条提交
+	--since, --after   //仅显示指定时间之后的提交。
+	--until, --before  //仅显示指定时间之前的提交。
+	--author           //仅显示指定作者相关的提交。
+    --committer		   //仅显示指定提交者相关的提交。
+	--grep             //仅显示含指定关键字的提交
+	-S				   //仅显示添加或移除了某个关键字的提交
+
+#### 10.撤销操作
+
+###### --commit之后撤销
+	$ git commit --amend
+这个命令会将暂存区中的文件提交。 如果自上次提交以来你还未做任何修改（例如，在上次提交后马上执行了此命令），那么快照会保持不变，而你所修改的只是提交信息。
+
+最终你只会有一个提交 - 第二次提交将代替第一次提交的结果。
+
+###### --add之后撤销
+
+	$ git reset <commit SHA1> <File>
+这个命令表示将 `File` 文件的 `index` 和 `Git Repo` 的状态恢复到 `commit SHA1` 时的状态，但是不会改变 `Working Directory` 的状态（除非加个参数）。事实上 `reset` 命令也能撤销commit之后的更改，这里不想写出来。可以参考[Git官网对于 `reset` 命令的说明](https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E9%87%8D%E7%BD%AE%E6%8F%AD%E5%AF%86#_git_reset)。
+
+#### 11.远程仓库的使用
+
+这里命令较多，所以我直接列出命令并用注释解释命令使用方式和用途。
+
+    $ git remote         //列出远程仓库的简称（默认为origin)
+	$ git remote -v      //列出远程仓库简称和对应读写url
+	$ git remote add <shortname> <url> //增加一个名为shortname的远程仓库
+	$ git fetch [remote-name]   //从远程仓库中获取数据（但不会自动合并）
+	$ git push [remote-name] [branch-name] //向远程仓库推送数据
+	$ git remote show [remote-name]        //查看远程仓库更多信息
+	$ git remote rename <From> <To>        //重命名仓库
+	$ git remote rm <name>                 //移除仓库
+
+#### 12.Git标签
+一般使用这个功能来标记重要节点（如V1.0）。
+
+	$ git tag                 //查看当前标签
+	$ git tag -l <find>       //查找标签
+	$ git tag -a <Version> [-m] [message] //创建附注标签
+	$ git tag <Version>       //创建轻量标签
+	$ git tag -a <Version> <commit_SHA1>  //给历史commit打标签
+
+#### 13. 分支
+分支基本概念见Git官网：[分支简介](https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%AE%80%E4%BB%8B)  
+在Git中鼓励使用分支。  
+以下内容只介绍命令，不介绍概念。
+
+	$ git branch -v                  //列出所有分支并产看最后一次提交
+	$ git branch [--merged] [--no-merged] //筛选分支列出
+	$ git branch <name>              //新建分支
+	$ git checkout <name>            //切换分支
+	$ git merge <name>               //合并name到当前分支
+	$ git branch -d <name>           //删除分支
+	
+###### --冲突分支的合并
+如果在两个分支中对同一个文件同时做了修改，合并时就会产生冲突。这时Git会提醒你，并且在产生冲突的文件中加上一些特殊的字段，便于你进行修改，它看起来会是这个样子：
+
+	<<<<<<< HEAD:index.html
+	<div id="footer">contact : email.support@github.com</div>
+	=======
+	<div id="footer">
+ 	please contact us at support@github.com
+	</div>
+	>>>>>>> iss53:index.html
+这表示 HEAD 所指示的版本在这个区段的上半部分（`=======` 的上半部分），而 iss53 分支所指示的版本在 `=======` 的下半部分。  
+为了解决冲突，你必须选择使用由 ======= 分割的两部分中的一个，或者你也可以自行合并这些内容。
+
+最后当你解决完冲突之后，使用 `git commit` 命令提交。
+
+#### 其他
+
+	$ git config --global alias.<alias> <command>  //创建命令别名
