@@ -236,6 +236,51 @@ Table 1. git log --pretty=format 常用的选项
 
 最后当你解决完冲突之后，使用 `git commit` 命令提交。
 
+###### --跟踪分支（上游分支）
+克隆一个仓库时，Git会自动创建一个本地跟踪分支，跟踪 origin/master 的 master 分支。如果还想跟踪远程仓库的其他分支，可以自行添加。
+
+	$ git checkout --track [remote]/[branch]//将本地分支名称与远程设为相同
+	$ git checkout -b [remotename]/[branch] //自行设置本地分支名称
+
+###### --删除远程分支
+	$ git push <repo> --delete <branch>
+
+#### 14.变基(Rebase)
+之前讲的 `merge` 命令做的是一个简单的三方合并操作，具体如下图所示：
+![merge实现](https://git-scm.com/book/en/v2/images/basic-rebase-1.png)
+![merge实现](https://git-scm.com/book/en/v2/images/basic-rebase-2.png)
+
+#
+
+而`rebase`命令则是将一条分支上的内容复制过来以进行合并，如图所示：
+![rebase实现](https://git-scm.com/book/en/v2/images/basic-rebase-3.png)
+![rebase实现](https://git-scm.com/book/en/v2/images/basic-rebase-4.png)
+
+###### --一个变基的例子
+
+现在有如图所示的项目，如果你想要先把cient分支并入master然后再把server分支并入master该怎么操作呢？由于client不是直接从master分支出去的，所以这个情况看起来有点复杂，但是操作起来也还好。我们可以使用带 `--onto` 参数的 `rebase` 命令来完成。
+![rebase example](https://git-scm.com/book/en/v2/images/interesting-rebase-1.png)
+
+	$ git rebase --onto master server client
+
+以上命令的意思是取出client分支，将其与server共同祖先之后的修改重放到master上。
+操作之后结果如图所示：
+![rebase example](https://git-scm.com/book/en/v2/images/interesting-rebase-2.png)
+然后我们可以快进合并master分支。
+
+	$ git checkout master
+	$ git merge client
+
+接下来把server分支也整合进来：
+
+	$ git rebase master server
+	$ git checkout master
+    $ git merge server
+
+###### --变基操作注意事项
+**只对**尚未推送或分享给别人的本地修改执行变基操作清理历史，**从不对**已推送至别处的提交执行变基操作。  
+否则别人本地仓库是未变基的版本，而你却将服务器上的仓库变更为了变基的版本。下次别人进行提交时就会产生混乱。
 #### 其他
 
 	$ git config --global alias.<alias> <command>  //创建命令别名
+
