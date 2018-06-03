@@ -174,18 +174,25 @@ Table 1. git log --pretty=format 常用的选项
 	--grep             //仅显示含指定关键字的提交
 	-S				   //仅显示添加或移除了某个关键字的提交
 
-#### 10.撤销操作
+#### 10.撤销OR修改操作
 
-###### --commit之后撤销
+###### 修改最后一次commit
 	$ git commit --amend
 这个命令会将暂存区中的文件提交。 如果自上次提交以来你还未做任何修改（例如，在上次提交后马上执行了此命令），那么快照会保持不变，而你所修改的只是提交信息。
 
+如果你做了修改，这个命令会将修改提交，并且使用当前修改代替最后一次的修改。
+
 最终你只会有一个提交 - 第二次提交将代替第一次提交的结果。
 
-###### --add之后撤销
+###### 回滚操作
 
-	$ git reset <commit SHA1> <File>
-这个命令表示将 `File` 文件的 `index` 和 `Git Repo` 的状态恢复到 `commit SHA1` 时的状态，但是不会改变 `Working Directory` 的状态（除非加个参数）。事实上 `reset` 命令也能撤销commit之后的更改，这里不想写出来。可以参考[Git官网对于 `reset` 命令的说明](https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E9%87%8D%E7%BD%AE%E6%8F%AD%E5%AF%86#_git_reset)。
+	$ git reset [--soft|--mixed|hard] <commit SHA1> <File>
+
+`--soft` 表示将 `File` 文件的 `index` 的状态恢复到 `commit SHA1` 时的状态
+`--mixed` 表示将 `File` 文件的 `index` 和 `Git Repo` 的状态恢复到 `commit SHA1` 时的状态
+`--hard` 表示将 `File` 文件的 `index`、`Git Repo`、`Working Directory` 的状态恢复到 `commit SHA1` 时的状态
+
+可以参考[Git官网对于 `reset` 命令的说明](https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E9%87%8D%E7%BD%AE%E6%8F%AD%E5%AF%86#_git_reset)。
 
 #### 11.远程仓库的使用
 
